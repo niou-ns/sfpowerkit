@@ -74,7 +74,9 @@ export default class ScratchOrgUtils {
         config_file_path: string,
         expiry: number,
         hubOrg: Org,
-        alias_prefix?: string
+        alias_prefix?: string,
+        apiversion?: string,
+        no_track_source?: boolean
     ): Promise<ScratchOrg> {
         SFPLogger.log(
             'Parameters: ' + id + ' ' + adminEmail + ' ' + config_file_path + ' ' + expiry + ' ',
@@ -82,16 +84,24 @@ export default class ScratchOrgUtils {
         );
 
         let result;
-        let getSFDXCommand = `sfdx force:org:create -f ${config_file_path} -d ${expiry} -w 10 -v ${hubOrg.getUsername()} --json`;
+        let getSFDXCommand = `sf org create scratch --definition-file ${config_file_path} --duration-days ${expiry} -w 10 -v ${hubOrg.getUsername()} --json --no-track-source`;
 
         if (adminEmail) {
-            getSFDXCommand += ` adminEmail=${adminEmail}`;
+            getSFDXCommand += ` --admin-email=${adminEmail}`;
         }
 
         if (alias_prefix) {
-            getSFDXCommand += ` --setalias ${alias_prefix}${id}`;
+            getSFDXCommand += ` --alias ${alias_prefix}${id}`;
         } else {
-            getSFDXCommand += ` --setalias SO${id}`;
+            getSFDXCommand += ` --alias SO${id}`;
+        }
+
+        if (no_track_source) {
+            getSFDXCommand += ` --no-track-source`;
+        }
+
+        if (apiversion) {
+            getSFDXCommand += ` --api-version=${apiversion}`;
         }
 
         result = child_process.execSync(getSFDXCommand, { stdio: 'pipe' });
@@ -250,7 +260,7 @@ export default class ScratchOrgUtils {
                     // if new version compatible get Available / In progress
                     query =
                         query + `AND ( Allocation_status__c ='Available' OR Allocation_status__c = 'In Progress' ) `;
-                } 
+                }
                 query = query + ORDER_BY_FILTER;
                 SFPLogger.log('QUERY:' + query, LoggerLevel.TRACE);
                 const results = (await hubConn.query(query)) as any;

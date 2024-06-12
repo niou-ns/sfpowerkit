@@ -317,7 +317,9 @@ export default class PoolCreateImpl {
                         this.poolConfig.pool.config_file_path,
                         poolUser.expiry ? poolUser.expiry : this.poolConfig.pool.expiry,
                         this.hubOrg,
-                        this.poolConfig.pool.alias_prefix
+                        this.poolConfig.pool.alias_prefix,
+                        this.apiversion,
+                        this.poolConfig.pool.no_track_source
                     );
                     poolUser.scratchOrgs.push(scratchOrg);
                     this.totalAllocated++;
@@ -680,6 +682,7 @@ export interface Pool {
     relax_ip_ranges: IpRanges[];
     max_allocation: number;
     alias_prefix?: string;
+    no_track_source?: boolean
 }
 
 export interface PoolUser {
