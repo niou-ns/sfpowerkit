@@ -2,7 +2,7 @@ import { SfdxProject } from '@salesforce/core';
 import { UX } from '@salesforce/command';
 import chalk = require('chalk');
 import * as fs from 'fs-extra';
-import SQLITEKeyValue from './utils/sqlitekv';
+// import SQLITEKeyValue from './utils/sqlitekv';
 import FileUtils from './utils/fileutils';
 import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 const NodeCache = require('node-cache');
@@ -33,16 +33,16 @@ export class Sfpowerkit {
     }
 
     public static initCache() {
-        try {
-            //Set the cache path on init, 
-            //TODO: Move this to a temporary directory with randomization
-            Sfpowerkit.cache = new SQLITEKeyValue(FileUtils.getLocalCachePath('sfpowerkit-cache.db'));
-            Sfpowerkit.cache.init();
-        } catch (error) {
-            //Fallback to NodeCache, as sqlite cache cant be lazily loaded
-            //Retreive and Merge doesnt have workers so sqlite cant be loaded.. need further investigation
+        // try {
+        //     //Set the cache path on init,
+        //     //TODO: Move this to a temporary directory with randomization
+        //     Sfpowerkit.cache = new SQLITEKeyValue(FileUtils.getLocalCachePath('sfpowerkit-cache.db'));
+        //     Sfpowerkit.cache.init();
+        // } catch (error) {
+        //     //Fallback to NodeCache, as sqlite cache cant be lazily loaded
+        //     //Retreive and Merge doesnt have workers so sqlite cant be loaded.. need further investigation
             Sfpowerkit.cache = new NodeCache();
-        }
+        // }
     }
 
     public static getFromCache(key: string): any {
